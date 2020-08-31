@@ -14,5 +14,19 @@ namespace HouseOfCards
             Name = name;
             Cards = new Card[5];
         }
+
+        public void ShowCards()
+        {
+            foreach (var card in Cards)
+            {
+                Console.Write($"{card.Number} - {card.Color} \t");
+            }
+        }
+
+        public void ShowRandomCard()
+        {
+            Random rnd = new Random();
+            Console.WriteLine($"{Cards[rnd.Next(5)].Number} - {Cards[rnd.Next(5)].Color}");
+        }
     }
 }

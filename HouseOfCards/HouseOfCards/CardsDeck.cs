@@ -10,11 +10,12 @@ namespace HouseOfCards
         public Card[] Deck;
         public CardsDeck()
         {
-            Deck = new Card[50];
+            GenerateDeck();
         }
 
         public void GenerateDeck()
         {
+            Deck = new Card[50];
             int index = 0;
             for (int i = 0; i < 5; i++)
             {
@@ -38,6 +39,7 @@ namespace HouseOfCards
         public Card[] GetCardsFromDeck(int numberOfCardsToTake)
         {
             Card[] cards = Deck.Take(numberOfCardsToTake).ToArray();
+            Deck = Deck.Where(d => !cards.Contains(d)).ToArray();
             return cards;
         }
 
