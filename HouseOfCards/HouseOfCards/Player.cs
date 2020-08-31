@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace HouseOfCards
@@ -29,6 +30,13 @@ namespace HouseOfCards
         {
             Random rnd = new Random();
             Console.WriteLine($"{Cards[rnd.Next(5)].Number} - {Cards[rnd.Next(5)].Color}");
+        }
+
+        public Card ThrowCard(int index)
+        {
+            Card card = Cards[index - 1];
+            Cards = Cards.Where((card, indx) => indx != index - 1).ToList();
+            return card;
         }
     }
 }

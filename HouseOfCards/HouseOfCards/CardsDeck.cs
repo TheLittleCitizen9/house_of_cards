@@ -17,24 +17,18 @@ namespace HouseOfCards
         public void GenerateDeck()
         {
             Deck = new List<Card>();
-            int index = 0;
             for (int i = 0; i < 5; i++)
             {
-                Deck.Add(new Card(1, (CardColors)index));
-                Deck.Add(new Card(1, (CardColors)index));
-                Deck.Add(new Card(1, (CardColors)index));
-
-                Deck.Add(new Card(2, (CardColors)index));
-                Deck.Add(new Card(2, (CardColors)index));
-
-                Deck.Add(new Card(3, (CardColors)index));
-                Deck.Add(new Card(3, (CardColors)index));
-
-                Deck.Add(new Card(4, (CardColors)index));
-                Deck.Add(new Card(4, (CardColors)index));
-
-                Deck.Add(new Card(5, (CardColors)index));
-                index++;
+                Deck.Add(new Card(1, (CardColors)i));
+                Deck.Add(new Card(2, (CardColors)i));
+                Deck.Add(new Card(3, (CardColors)i));
+                Deck.Add(new Card(4, (CardColors)i));
+                Deck.Add(new Card(5, (CardColors)i));
+                Deck.Add(new Card(6, (CardColors)i));
+                Deck.Add(new Card(7, (CardColors)i));
+                Deck.Add(new Card(8, (CardColors)i));
+                Deck.Add(new Card(9, (CardColors)i));
+                Deck.Add(new Card(10, (CardColors)i));
             }
         }
 
