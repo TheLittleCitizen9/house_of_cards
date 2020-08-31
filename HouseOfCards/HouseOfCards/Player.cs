@@ -7,20 +7,22 @@ namespace HouseOfCards
     public class Player
     {
         public string Name { get; private set; }
-        public Card[] Cards { get; set; }
+        public List<Card> Cards { get; set; }
 
         public Player(string name)
         {
             Name = name;
-            Cards = new Card[5];
+            Cards = new List<Card>();
         }
 
         public void ShowCards()
         {
+            Console.Write($"Player {Name}: ");
             foreach (var card in Cards)
             {
                 Console.Write($"{card.Number} - {card.Color} \t");
             }
+            Console.WriteLine();
         }
 
         public void ShowRandomCard()

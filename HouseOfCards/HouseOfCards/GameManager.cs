@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 
@@ -9,13 +10,13 @@ namespace HouseOfCards
     {
         private int _strikeCounter = 4;
         private int _cluesCounter = 5;
-        public GameBoard GameBoard;
+        public GameBoard gameBoard;
         public List<Player> Players;
         public CardsDeck CardsDeck;
 
         public GameManager()
         {
-            GameBoard = new GameBoard();
+            gameBoard = new GameBoard();
             Players = new List<Player>();
             CardsDeck = new CardsDeck();
         }
@@ -27,7 +28,7 @@ namespace HouseOfCards
             Console.WriteLine("Welcom to House Of Cards");
             Console.WriteLine("Enter players");
             RegisterPlayers();
-            CardsDeck.ShuffleDeck();
+            //CardsDeck.ShuffleDeck();
             Deal();
             Player currentPlayer = null;
             while(CheckDeckStatus())
@@ -37,6 +38,7 @@ namespace HouseOfCards
                     indexOfPlayer = indexOfPlayer - 4;
                 }
                 currentPlayer = Players[indexOfPlayer];
+                Console.WriteLine($"Hi {currentPlayer.Name},");
                 PrintMenu();
                 int option = int.Parse(Console.ReadLine());
                 if(option == 1)
@@ -113,36 +115,64 @@ namespace HouseOfCards
         public Card ThrowPlayersCard(Player player, int index)
         {
             Card card = player.Cards[index - 1];
-            player.Cards = player.Cards.Where((card, indx) => indx != index - 1).ToArray();
+            player.Cards = player.Cards.Where((card, indx) => indx != index - 1).ToList();
             return card;
         }
 
         public bool CheckIfCardIsValid(Card card)
         {
-            for (int i = 0; i < GameBoard.Board.GetLength(0); i++)
+            if (!gameBoard.Board.ContainsKey(card.Color.ToString()))
             {
-                for (int j = 0; j < GameBoard.Board.GetLength(1); j++)
-                {
-                    if(GameBoard.Board[i,j].Color == card.Color)
-                    {
-                        if(GameBoard.Board[i,j].Number +1 == card.Number)
-                        {
-                            GameBoard.PutCardOnBoard(card);
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else if(GameBoard.Board[i,j] == null)
-                    {
-                        GameBoard.PutCardOnBoard(card);
-                        return true;
-                    }
-                }
+                throw new NullReferenceException("Card color does not fit to the table. Please fix your game.");
             }
-            return false;
+            List<Card> colorCardsOnBoard = new List<Card>(gameBoard.Board[card.Color.ToString()]);
+            if (colorCardsOnBoard.Count == 0)
+            {
+                if (card.Number == 1)
+                {
+                    gameBoard.PutCardOnBoard(card);
+                    return true;
+                }
+                else
+                    return false;
+            }
+            colorCardsOnBoard = colorCardsOnBoard.OrderBy(crd => crd.Number).ToList();
+            if (colorCardsOnBoard.Last().Number + 1 == card.Number)
+            {
+                gameBoard.PutCardOnBoard(card);
+                return true;
+            }
+            else
+                return false;
+
+            
+            //for (int i = 0; i < GameBoard.Board.GetLength(0); i++)
+            //{
+            //    for (int j = 0; j < GameBoard.Board.GetLength(1); j++)
+            //    {
+            //        if (GameBoard.Board[i, j] != null)
+            //        { 
+            //            if (GameBoard.Board[i, j].Color == card.Color)
+            //            {
+            //                if (GameBoard.Board[i, j].Number + 1 == card.Number)
+            //                {
+            //                    GameBoard.PutCardOnBoard(card);
+            //                    return true;
+            //                }
+            //                else
+            //                {
+            //                    return false;
+            //                }
+            //            }
+            //            else if (GameBoard.Board[i, j] == null)
+            //            {
+            //                GameBoard.PutCardOnBoard(card);
+            //                return true;
+            //            }
+            //        }
+            //    }
+            //}
+            //return false;
         }
 
         public bool IncreaseCluesCounter()
@@ -158,7 +188,7 @@ namespace HouseOfCards
 
         public bool CheckDeckStatus()
         {
-            if(CardsDeck.Deck.Length > 0)
+            if(CardsDeck.Deck.Count > 0)
             {
                 return true;
             }
@@ -167,9 +197,9 @@ namespace HouseOfCards
 
         public void GivePlayerNewCard(Player player)
         {
-            if(player.Cards[player.Cards.Length-1] == null)
+            if(player.Cards[player.Cards.Count-1] == null)
             {
-                player.Cards[player.Cards.Length - 1] = CardsDeck.GetCardsFromDeck(1)[0];
+                player.Cards[player.Cards.Count - 1] = CardsDeck.GetCardsFromDeck(1)[0];
             }
             else
             {
@@ -180,14 +210,11 @@ namespace HouseOfCards
         public int CalculateScore()
         {
             int score = 0;
-            for (int i = 0; i < GameBoard.Board.GetLength(0); i++)
+            foreach (var colorCardsPair in gameBoard.Board)
             {
-                for (int j = 0; j < GameBoard.Board.GetLength(1); j++)
+                foreach (var card in colorCardsPair.Value)
                 {
-                    if(GameBoard.Board[i,j] != null)
-                    {
-                        score++;
-                    }
+                    score++ ;
                 }
             }
             return score;
@@ -205,15 +232,12 @@ namespace HouseOfCards
         public bool CheckWinningStatus()
         {
             int fivesCounter = 0;
-            int j = GameBoard.Board.GetLength(1) - 1;
-            for (int i = 0; i < GameBoard.Board.GetLength(0); i++)
+            foreach (var colorCardsPair in gameBoard.Board)
             {
-                if(GameBoard.Board[i, j] != null && GameBoard.Board[i, j].Number == 5)
-                {
+                if (colorCardsPair.Value[colorCardsPair.Value.Count - 1].Number == 5)
                     fivesCounter++;
-                }
             }
-            if(fivesCounter == 5)
+            if (fivesCounter == 5)
             {
                 return true;
             }
@@ -241,6 +265,7 @@ namespace HouseOfCards
 
         private void PrintMenu()
         {
+            Console.WriteLine("What would you like to do?");
             Console.WriteLine("1 - Show Other Players Cards");
             Console.WriteLine("2 - Play Card");
             Console.WriteLine("3 - Get Clue");
