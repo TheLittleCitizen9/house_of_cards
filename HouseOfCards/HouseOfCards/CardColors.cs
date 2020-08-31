@@ -6,10 +6,10 @@ namespace HouseOfCards
 {
     public enum CardColors
     {
-        Red,
-        Green,
-        Blue,
-        Yellow,
-        White
+        Red=0,
+        Green=1,
+        Blue=2,
+        Yellow=3,
+        White=4
     }
 }
